@@ -41,6 +41,7 @@ public class MainActivity extends Activity {
 
 	static final public String MYPREFS = "myprefs";
 	static final public String PREF_URL = "restore_url";
+	static final public String MY_WEBPAGE = "http://users.soe.ucsc.edu/~luca/android.html";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +66,7 @@ public class MainActivity extends Activity {
 	private static final int MAX_SETUP_DOWNLOAD_TRIES = 3;
 	
 	// ****Change this.****
-	private static final String DOWNLOAD_URL = "http://people.ucsc.edu/~lmcghee/news_sources.json";
+	private static final String DOWNLOAD_URL = "http://luca-ucsc.appspot.com/jsonnews/default/news_sources.json";
 	
 	// Background downloader.
 	private BackgroundDownloader downloader = null;
@@ -229,6 +230,7 @@ public class MainActivity extends Activity {
 					SharedPreferences settings = getSharedPreferences(MYPREFS, 0);
 					Editor ed = settings.edit();
 					ed.putString(PREF_URL, el.siteUrl);
+					ed.putString(MY_WEBPAGE, el.siteUrl);
 					ed.commit();
 					
 					// Create intent and Go to Read activity

@@ -22,7 +22,6 @@ import android.widget.Button;
 public class WebActivity extends Activity {
 
 	static final public String WEBPAGE_NOTHING = "about:blank";
-	static final public String MY_WEBPAGE = "http://users.soe.ucsc.edu/~luca/android.html";
 	static final public String LOG_TAG = "WebActivity";
 	
 	WebView myWebView;
@@ -72,6 +71,69 @@ public class WebActivity extends Activity {
 		return true;
 	}
 	
+   @Override
+   public void onPause() {
+     	Method pause = null;
+     	
+     	try {
+     		pause = WebView.class.getMethod("onPause");
+     	} catch (SecurityException e) {
+     		// Nothing
+     	} catch (NoSuchMethodException e) {
+     		// Nothing
+     	}
+    	if (pause != null) {
+    		try {
+    			pause.invoke(myWebView);
+    		} catch (InvocationTargetException e) {
+			} catch (IllegalAccessException e) {
+			}
+    	} else {
+    		/// No such method.  Stores the current URL.
+			String suspendUrl = myWebView.getUrl();
+			SharedPreferences settings = getSharedPreferences(MainActivity.MYPREFS, 0);
+			Editor ed = settings.edit();
+			ed.putString(MainActivity.PREF_URL, suspendUrl);
+			ed.commit();
+			// And loads a URL without any processing.
+			myWebView.loadUrl(WEBPAGE_NOTHING);
+    	}
+    	super.onPause();
+   } 
+
+   @Override
+   public void onResume() {
+       	super.onResume();
+
+       	SharedPreferences settings = getSharedPreferences(MainActivity.MYPREFS, 0);
+       	String suspendUrl = settings.getString(MainActivity.PREF_URL, "");
+       	Method resume = null;
+       	// Resumes the webview.
+       	try {
+       		resume = WebView.class.getMethod("onResume");
+       	} catch (SecurityException e) {
+       		// Nothing
+       	} catch (NoSuchMethodException e) {
+       		// Nothing
+       	}
+    	if (resume != null) {
+    		try {
+    			resume.invoke(myWebView);
+    		} catch (InvocationTargetException e) {
+			} catch (IllegalAccessException e) {
+			}
+    	} else {
+    		// No such method.  Restores the suspended URL.
+    		if (suspendUrl == null) {
+    			// load original Json url
+    			myWebView.loadUrl(MainActivity.MY_WEBPAGE);
+    		} else {
+    			myWebView.loadUrl(suspendUrl);
+    		}
+    	}
+   }
+
+	
 	// handler for forward navigation button 
 	public void clickForward(View v) {
 		if (myWebView.canGoForward()) {
@@ -92,5 +154,26 @@ public class WebActivity extends Activity {
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
+	
+    // The back button should go back in page history, not in app history.
+    @Override
+    public void onBackPressed() {
+        if (myWebView.canGoBack()) {
+        	// check for false positive due to redirects
+        	SharedPreferences settings = getSharedPreferences(MainActivity.MYPREFS, 0);
+        	// ogUrl == url dled from Json site in MainActivity
+        	String ogUrl = settings.getString(MainActivity.MY_WEBPAGE, "");
+        	String unRedirect = myWebView.getOriginalUrl();
+        	if (ogUrl.equals(unRedirect)) {
+        		super.onBackPressed();
+        	} else {
+        		myWebView.goBack();
+        	}
+        } else {
+        // If it wasn't the Back key or there's no web page history, bubble up to the default
+        // system behavior (probably exit the activity)
+        	super.onBackPressed();
+        }
+    }
 
 }
