@@ -5,5 +5,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_web">WebActivity</string>
+    <string name="forward">FWD</string>
+    <string name="back">BACK</string>
+    <string name="choices">SITES</string>
 
 </resources>

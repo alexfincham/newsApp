@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:onClick="clickBack"
     tools:context=".WebActivity" >
 
     <WebView
@@ -17,6 +18,28 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text="Button" />
+        android:onClick="clickForward"
+        android:text="@string/forward" />
+
+    <Button
+        android:id="@+id/backButton1"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:onClick="clickBack"
+        android:text="@string/back" />
+
+    <Button
+        android:id="@+id/sitesButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/fwdButton1"
+        android:layout_alignBottom="@+id/fwdButton1"
+        android:layout_centerHorizontal="true"
+        android:onClick="backChoices"
+        android:text="@string/choices" />
     
 </RelativeLayout>

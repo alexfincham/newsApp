@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -36,8 +37,12 @@ public class WebActivity extends Activity {
 	    	String[] nextDomain = url.split("\\.");
 	    	String[] currDomain = currentUrl.split("\\.");
 	    	// check whether the url to be loaded is in original domain of webview
+	    	if (nextDomain[0].equals(currDomain[0])) {
+	    		// for urls of the form http://blah.com, where domain is first token
+	    		return false;
+	    	}
 	        if (nextDomain[1].equals(currDomain[1])) {
-	            // This is my web site, so do not override; let my WebView load the page
+	            // for urls of the form http://([www]|[m]).blah.com, where domain is second token
 	            return false;
 	        }
 	        // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
@@ -66,6 +71,26 @@ public class WebActivity extends Activity {
 		getMenuInflater().inflate(R.menu.web, menu);
 		return true;
 	}
+	
+	// handler for forward navigation button 
+	public void clickForward(View v) {
+		if (myWebView.canGoForward()) {
+			myWebView.goForward();
+		}
+	}
 
+	// handler for Backwards navigation button 
+	public void clickBack(View v) {
+		if (myWebView.canGoBack()) {
+			myWebView.goBack();
+		}
+	}
+	
+	// handler for switching back to Main activity 
+	public void backChoices(View v) {
+		Intent intent = new Intent(this, MainActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+	}
 
 }
